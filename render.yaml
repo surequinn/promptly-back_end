@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: promptly-api
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLERK_PUBLISHABLE_KEY
+        fromService: promptly-api
+        name: CLERK_PUBLISHABLE_KEY
+      - key: CLERK_SECRET_KEY
+        fromService: promptly-api
+        name: CLERK_SECRET_KEY
+      - key: SUPABASE_URL
+        fromService: promptly-api
+        name: SUPABASE_URL
+      - key: SUPABASE_ANON_KEY
+        fromService: promptly-api
+        name: SUPABASE_ANON_KEY

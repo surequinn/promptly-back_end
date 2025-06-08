@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(cuid())
+  clerkUserId      String   @unique // Clerk user ID
+  email            String?
+  name             String?
+  age              Int?
+  gender           String?
+  orientation      String[] // Array of strings for multiple orientations
+  selectedVibes    String[] // User's selected vibes
+  interests        String[] // User's interests
+  uniqueInterest   String?  // Their unique interest
+  profileCompleted Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  prompts          Prompt[]
+  ratings          Rating[]
+  
+  @@map("users")
+}
+
+model Prompt {
+  id            String      @id @default(cuid())
+  userId        String
+  category      String      // "Dating me is like...", "Together, we could...", etc.
+  responseText  String
+  aiGenerated   Boolean     @default(true)
+  status        PromptStatus @default(ACTIVE)
+  promptType    PromptType   @default(GENERATED) // GENERATED or USER_WRITTEN
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  // Relations
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ratings       Rating[]
+  
+  @@map("prompts")
+}
+
+model Rating {
+  id          String   @id @default(cuid())
+  userId      String
+  promptId    String
+  score       String   // "7/10", "8.5/10", etc.
+  explanation Json     // Array of feedback objects with title and body
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prompt      Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  
+  @@map("ratings")
+}
+
+model UserSession {
+  id              String   @id @default(cuid())
+  userId          String
+  currentScreen   String?  // Track where user left off
+  sessionData     Json?    // Store any temporary session data
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("user_sessions")
+}
+
+model PromptCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique // "Dating me is like...", "Together, we could...", etc.
+  description String?
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("prompt_categories")
+}
+
+enum PromptStatus {
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+enum PromptType {
+  GENERATED
+  USER_WRITTEN
+  EDITED
+}
+
+model PromptUsage {
+  id string @id
+  promptId string
+  operation_user string
+  createdAt   DateTime @default(now())
+
+    // Relations
+  user        User     @relation(fields: [operation_user], references: [id], onDelete: Cascade)
+  prompt      Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@map("prompt_usage")
+}
