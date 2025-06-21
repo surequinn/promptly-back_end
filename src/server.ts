@@ -35,6 +35,9 @@ app.use(
       const allowedOrigins = [
         "https://promptly-frontend-green.vercel.app",
         "http://localhost:8081",
+        "http://192.168.2.171:8081",
+        "http://localhost:8083",
+        "http://192.168.2.171:8083",
         // add more preview URLs if needed
       ];
       if (!origin || allowedOrigins.includes(origin)) {

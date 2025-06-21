@@ -2,8 +2,97 @@ import { getAuth, requireAuth } from "@clerk/express";
 import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "../lib/supabase";
+import aiService from "../services/ai";
 
 const router = Router();
+
+// =============================================
+// AI-Powered Routes
+// =============================================
+
+// Feature 1: Use AI to write a prompt (3 suggestions)
+router.post("/generate-suggestions", requireAuth(), async (req, res) => {
+  try {
+    const userProfile = req.body.userProfile;
+    if (!userProfile) {
+      return res.status(400).json({ error: "User profile is required" });
+    }
+    const suggestions = await aiService.generatePromptSuggestions(userProfile);
+    res.json(suggestions);
+  } catch (error) {
+    console.error("Error generating prompt suggestions:", error);
+    res.status(500).json({ error: "Failed to generate suggestions" });
+  }
+});
+
+// Feature 1.1: Revise an AI-generated prompt
+router.post("/revise-suggestion", requireAuth(), async (req, res) => {
+  try {
+    const { prompt, response, evaluation, feedback } = req.body;
+    if (!prompt || !response || !evaluation || !feedback) {
+      return res
+        .status(400)
+        .json({ error: "Missing required fields for revision" });
+    }
+    const revised = await aiService.revisePromptSuggestion(
+      prompt,
+      response,
+      evaluation,
+      feedback
+    );
+    res.json(revised);
+  } catch (error) {
+    console.error("Error revising prompt suggestion:", error);
+    res.status(500).json({ error: "Failed to revise suggestion" });
+  }
+});
+
+// Feature 2: Evaluate a user's own response
+router.post("/evaluate-custom", requireAuth(), async (req, res) => {
+  try {
+    console.log("Request Body:", req.body);
+    const { prompt, response } = req.body;
+    if (!prompt || !response) {
+      return res
+        .status(400)
+        .json({ error: "Prompt and response are required" });
+    }
+    console.log(
+      `Using AI Service: ${process.env.AI_SERVICE_PROVIDER || "mock"}`
+    );
+    const evaluation = await aiService.evaluateUserPrompt(prompt, response);
+    res.json(evaluation);
+  } catch (error) {
+    console.error("Error evaluating user prompt:", error);
+    res.status(500).json({ error: "Failed to evaluate user prompt" });
+  }
+});
+
+// Feature 2.1: Revise a user's evaluated response
+router.post("/revise-custom", requireAuth(), async (req, res) => {
+  try {
+    const { prompt, response, evaluation, suggestions } = req.body;
+    if (!prompt || !response || !evaluation || !suggestions) {
+      return res
+        .status(400)
+        .json({ error: "Missing required fields for revision" });
+    }
+    const revised = await aiService.reviseUserPrompt(
+      prompt,
+      response,
+      evaluation,
+      suggestions
+    );
+    res.json(revised);
+  } catch (error) {
+    console.error("Error revising user prompt:", error);
+    res.status(500).json({ error: "Failed to revise user prompt" });
+  }
+});
+
+// =============================================
+// Existing Database Routes
+// =============================================
 
 // Generate prompts endpoint (requires authentication)
 router.post("/generate", requireAuth(), async (req, res) => {
