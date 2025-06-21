@@ -34,6 +34,7 @@ app.use(
     origin: (origin, callback) => {
       const allowedOrigins = [
         "https://promptly-frontend-green.vercel.app",
+        "https://promptly-front-hhihbvekx-quinns-projects-3ee04bc1.vercel.app",
         "http://localhost:8081",
         "http://192.168.2.171:8081",
         "http://localhost:8083",
