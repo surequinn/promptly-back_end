@@ -45,18 +45,28 @@ router.get("/profile", requireAuth(), async (req, res) => {
 
       if (createError) throw createError;
 
-      return res.json({
+      const newUserResult = {
         message: "User profile retrieved",
         userId: auth.userId,
         data: createdUser,
-      });
+      };
+      console.log(
+        "API /profile (GET, new user) result:",
+        JSON.stringify(newUserResult, null, 2)
+      );
+      return res.json(newUserResult);
     }
 
-    return res.json({
+    const existingUserResult = {
       message: "User profile retrieved",
       userId: auth.userId,
       data: user,
-    });
+    };
+    console.log(
+      "API /profile (GET, existing user) result:",
+      JSON.stringify(existingUserResult, null, 2)
+    );
+    return res.json(existingUserResult);
   } catch (error) {
     console.error("Error fetching user profile:", error);
     return res.status(500).json({
@@ -92,28 +102,34 @@ router.put("/profile", requireAuth(), async (req, res) => {
     // Update user in database
     const { data: updatedUser, error } = await supabase
       .from("users")
-      .update({
-        name,
-        age,
-        gender,
-        orientation,
-        selectedVibes,
-        interests,
-        uniqueInterest,
-        profileCompleted,
-        updatedAt: new Date().toISOString(),
-      })
-      .eq("clerkUserId", auth.userId)
+      .upsert(
+        {
+          id: auth.userId,
+          clerkUserId: auth.userId,
+          name,
+          age,
+          gender,
+          orientation,
+          selectedVibes,
+          interests,
+          uniqueInterest,
+          profileCompleted,
+          updatedAt: new Date().toISOString(),
+        },
+        { onConflict: "clerkUserId" }
+      )
       .select()
       .single();
 
     if (error) throw error;
 
-    return res.json({
+    const result = {
       message: "User profile updated successfully",
       userId: auth.userId,
       data: updatedUser,
-    });
+    };
+    console.log("API /profile (PUT) result:", JSON.stringify(result, null, 2));
+    return res.json(result);
   } catch (error) {
     console.error("Error updating user profile:", error);
     return res.status(500).json({

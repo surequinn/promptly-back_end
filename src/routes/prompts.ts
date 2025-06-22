@@ -18,10 +18,11 @@ router.post("/generate-suggestions", requireAuth(), async (req, res) => {
       return res.status(400).json({ error: "User profile is required" });
     }
     const suggestions = await aiService.generatePromptSuggestions(userProfile);
-    res.json(suggestions);
+    console.log("API /generate-suggestions result:", JSON.stringify(suggestions, null, 2));
+    return res.json(suggestions);
   } catch (error) {
     console.error("Error generating prompt suggestions:", error);
-    res.status(500).json({ error: "Failed to generate suggestions" });
+    return res.status(500).json({ error: "Failed to generate suggestions" });
   }
 });
 
@@ -40,10 +41,11 @@ router.post("/revise-suggestion", requireAuth(), async (req, res) => {
       evaluation,
       feedback
     );
-    res.json(revised);
+    console.log("API /revise-suggestion result:", JSON.stringify(revised, null, 2));
+    return res.json(revised);
   } catch (error) {
     console.error("Error revising prompt suggestion:", error);
-    res.status(500).json({ error: "Failed to revise suggestion" });
+    return res.status(500).json({ error: "Failed to revise suggestion" });
   }
 });
 
@@ -61,10 +63,11 @@ router.post("/evaluate-custom", requireAuth(), async (req, res) => {
       `Using AI Service: ${process.env.AI_SERVICE_PROVIDER || "mock"}`
     );
     const evaluation = await aiService.evaluateUserPrompt(prompt, response);
-    res.json(evaluation);
+    console.log("API /evaluate-custom result:", JSON.stringify(evaluation, null, 2));
+    return res.json(evaluation);
   } catch (error) {
     console.error("Error evaluating user prompt:", error);
-    res.status(500).json({ error: "Failed to evaluate user prompt" });
+    return res.status(500).json({ error: "Failed to evaluate user prompt" });
   }
 });
 
@@ -83,10 +86,11 @@ router.post("/revise-custom", requireAuth(), async (req, res) => {
       evaluation,
       suggestions
     );
-    res.json(revised);
+    console.log("API /revise-custom result:", JSON.stringify(revised, null, 2));
+    return res.json(revised);
   } catch (error) {
     console.error("Error revising user prompt:", error);
-    res.status(500).json({ error: "Failed to revise user prompt" });
+    return res.status(500).json({ error: "Failed to revise user prompt" });
   }
 });
 
@@ -148,11 +152,13 @@ router.post("/generate", requireAuth(), async (req, res) => {
 
     if (error) throw error;
 
-    return res.json({
+    const result = {
       message: "Prompt generated and saved successfully",
       userId: auth.userId,
       data: savedPrompt,
-    });
+    };
+    console.log("API /generate result:", JSON.stringify(result, null, 2));
+    return res.json(result);
   } catch (error) {
     console.error("Error generating prompt:", error);
     return res.status(500).json({
@@ -198,11 +204,13 @@ router.get("/user", requireAuth(), async (req, res) => {
 
     if (error) throw error;
 
-    return res.json({
+    const result = {
       message: "User prompts retrieved successfully",
       userId: auth.userId,
       data: prompts || [],
-    });
+    };
+    console.log("API /user result:", JSON.stringify(result, null, 2));
+    return res.json(result);
   } catch (error) {
     console.error("Error fetching user prompts:", error);
     return res.status(500).json({
@@ -263,11 +271,13 @@ router.put("/:promptId", requireAuth(), async (req, res) => {
 
     if (error) throw error;
 
-    return res.json({
+    const result = {
       message: "Prompt updated successfully",
       userId: auth.userId,
       data: updatedPrompt,
-    });
+    };
+    console.log("API /:promptId (PUT) result:", JSON.stringify(result, null, 2));
+    return res.json(result);
   } catch (error) {
     console.error("Error updating prompt:", error);
     return res.status(500).json({
@@ -316,11 +326,13 @@ router.post("/usage_record", requireAuth(), async (req, res) => {
 
     if (error) throw error;
 
-    return res.json({
+    const result = {
       message: "Prompt usage record saved successfully",
       userId: auth.userId,
       data: savedPromptUsage,
-    });
+    };
+    console.log("API /usage_record result:", JSON.stringify(result, null, 2));
+    return res.json(result);
   } catch (error) {
     console.error("Error saving prompt usage record:", error);
     return res.status(500).json({

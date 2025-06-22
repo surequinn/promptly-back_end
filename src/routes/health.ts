@@ -4,12 +4,18 @@ const router = Router();
 
 // Health check endpoint
 router.get("/", (req, res) => {
-  res.json({
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-    service: "promptly-api",
-    version: "1.0.0",
-  });
+  const healthcheck = {
+    uptime: process.uptime(),
+    message: "OK",
+    timestamp: Date.now(),
+  };
+  try {
+    console.log("API /health result:", JSON.stringify(healthcheck, null, 2));
+    res.send(healthcheck);
+  } catch (e: any) {
+    healthcheck.message = e;
+    res.status(503).send();
+  }
 });
 
 export default router;
