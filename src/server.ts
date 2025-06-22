@@ -33,6 +33,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       const allowedOrigins = [
+        "https://promptly-front-end.vercel.app",
         "https://promptly-frontend-green.vercel.app",
         "https://promptly-front-hhihbvekx-quinns-projects-3ee04bc1.vercel.app",
         "http://localhost:8081",
