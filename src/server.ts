@@ -52,6 +52,8 @@ app.use(
   })
 );
 
+app.options("*", cors());
+
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
