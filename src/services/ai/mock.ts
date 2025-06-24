@@ -113,6 +113,12 @@ export class MockAIService implements AIService {
     return Promise.resolve(exampleGeneratedResponses);
   }
 
+  async generatePromptSuggestionsForPrompt(userProfile: any, selectedPrompt: string): Promise<any> {
+    console.log("Mock AI: Generating prompt suggestions for specific prompt:", selectedPrompt, userProfile);
+    // Return the same example responses but with the selected prompt as chosenPrompt
+    return Promise.resolve({ chosenPrompt: selectedPrompt, ...exampleGeneratedResponses });
+  }
+
   async revisePromptSuggestion(
     prompt: string,
     response: string,

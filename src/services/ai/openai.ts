@@ -120,6 +120,69 @@ For example: { "responses": [ { "response": "...", "scores": {...} }, ... ] }`;
   }
 
   /**
+   * Feature 1.2: Generate 3 responses for a specific prompt (user-selected)
+   */
+  async generatePromptSuggestionsForPrompt(userProfile: any, selectedPrompt: string): Promise<any> {
+    console.log("generatePromptSuggestionsForPrompt input:", { userProfile, selectedPrompt });
+    
+    // Skip Step 1 (prompt selection) and go directly to Step 2 with the selected prompt
+    const generateResponsesSystem = `You are an AI dating assistant who generates and evaluates creative, personalized answers to dating app prompts (like Hinge). Your job is to generate 3 unique responses to this prompt: "${selectedPrompt}", and then score each response using expert evaluation criteria.
+
+### Step 1: Generate 3 responses
+Use the following input:
+- User's gender: ${userProfile.gender}
+- Target gender: ${userProfile.targetGender}
+- Dating app: Hinge
+- Desired tones: ${userProfile.tones.join(", ")}
+- User interests: ${userProfile.interests.join(", ")}, ${
+      userProfile.specificLove
+    }
+
+Each response should:
+- Be short and snappy, ideally under 20 words
+- Use a different tone for each: ${userProfile.tones.join(", ")}
+- Feel playful, personal, and confident—not generic or robotic
+- Incorporate at least one of these personal details or interests: ${userProfile.interests.join(
+      ", "
+    )}, or ${userProfile.specificLove}
+- Include a natural, casual follow-up question at the end of one response to invite conversation
+- It should sound spontaneous, not scripted or awkward
+- Avoid sounding like I'm trying too hard—keep it cool and relaxed
+- Use humor or irony if it fits the tone, but keep it light and approachable
+- Avoid clichés and typical AI phrasing (e.g., no em dashes, no overly formal, no robotic phrasing, no wordy language)
+- Use American English and keep it appropriate for a modern dating app
+The goal is to make users feel effortlessly interesting, like someone worth messaging back.
+
+### Step 2: Evaluate each response
+For every response you write, score it across 5 categories:
+1. Personality (30%) – Human, emotionally engaging, not generic
+2. Tone Fit (20%) – Matches intent, dating-appropriate
+3. Brevity & Clarity (15%) – Concise and easy to read
+4. Originality (20%) – Not a cliché, shows voice
+5. Conversation Spark (15%) – Invites response
+
+Return for each:
+- The response itself
+- 5 scores (0–10)
+- 1–2 sentence explanation per category
+- Calculated weighted average (0–10)
+- Label:  
+  🔥 Top-Tier (9–10), 🟢 Great Potential (7.5–8.9), 🟡 Room to Grow (6–7.4), 🔴 Needs Work (<6)
+
+Respond in JSON format only, with an array of responses and their evaluations. The root object must have a key named "responses" which contains the array.
+For example: { "responses": [ { "response": "...", "scores": {...} }, ... ] }`;
+
+    try {
+      const suggestions = await callOpenAI(generateResponsesSystem, "", true);
+      console.log("generatePromptSuggestionsForPrompt result:", suggestions);
+      return { chosenPrompt: selectedPrompt, ...suggestions };
+    } catch (error) {
+      console.error("Error in generatePromptSuggestionsForPrompt:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Feature 1.1: Revise an AI-generated prompt
    */
   async revisePromptSuggestion(

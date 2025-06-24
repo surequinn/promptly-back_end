@@ -3,6 +3,7 @@ import { OpenAIService } from "./openai";
 
 export interface AIService {
   generatePromptSuggestions(userProfile: any): Promise<any>;
+  generatePromptSuggestionsForPrompt(userProfile: any, selectedPrompt: string): Promise<any>;
   revisePromptSuggestion(
     prompt: string,
     response: string,

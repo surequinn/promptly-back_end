@@ -49,6 +49,21 @@ router.post("/revise-suggestion", requireAuth(), async (req, res) => {
   }
 });
 
+// Feature 1.2: Use AI to write a prompt (3 suggestions) for a user-selected prompt
+router.post("/generate-suggestions-for-prompt", requireAuth(), async (req, res) => {
+  try {
+    const { userProfile, selectedPrompt } = req.body;
+    if (!userProfile || !selectedPrompt) {
+      return res.status(400).json({ error: "User profile and selected prompt are required" });
+    }
+    const suggestions = await aiService.generatePromptSuggestionsForPrompt(userProfile, selectedPrompt);
+    return res.json(suggestions);
+  } catch (error) {
+    console.error("Error generating prompt suggestions for prompt:", error);
+    return res.status(500).json({ error: "Failed to generate suggestions" });
+  }
+});
+
 // Feature 2: Evaluate a user's own response
 router.post("/evaluate-custom", requireAuth(), async (req, res) => {
   try {
