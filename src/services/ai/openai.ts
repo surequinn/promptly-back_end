@@ -128,6 +128,7 @@ For example: { "responses": [ { "response": "...", "scores": {...} }, ... ] }`;
     evaluation: any,
     feedback: string
   ): Promise<any> {
+    console.log("revisePromptSuggestion input:", { prompt, response, evaluation, feedback });
     const systemContent = `You are an AI dating assistant who generates and evaluates creative, personalized answers to dating app prompts (like Hinge). Your job is to generate 3 unique responses to this prompt: "${prompt}", and then score each response using expert evaluation criteria. Now, 3 responses have been generated, and the user is choosing a response to improve based on user input feedback. Your job is to revise the response using the feedback and suggestions provided.
 
 You will receive:
@@ -140,11 +141,11 @@ You will receive:
 - Prompt: "${prompt}"
 - User chosen AI-Generated Response: "${response}"
 - Evaluation Summary of this response:
-  - Personality Score: ${evaluation.scores.personality} – ${evaluation.explanations.personality}
-  - Tone Fit Score: ${evaluation.scores.tone_fit} – ${evaluation.explanations.tone_fit}
-  - Brevity & Clarity Score: ${evaluation.scores.brevity_clarity} – ${evaluation.explanations.brevity_clarity}
-  - Originality Score: ${evaluation.scores.originality} – ${evaluation.explanations.originality}
-  - Conversation Spark Score: ${evaluation.scores.conversation_spark} – ${evaluation.explanations.conversation_spark}
+  - Personality Score: ${evaluation.scores.personality} – ${evaluation.explanation.personality}
+  - Tone Fit Score: ${evaluation.scores.tone_fit} – ${evaluation.explanation.tone_fit}
+  - Brevity & Clarity Score: ${evaluation.scores.brevity_and_clarity} – ${evaluation.explanation.brevity_and_clarity}
+  - Originality Score: ${evaluation.scores.originality} – ${evaluation.explanation.originality}
+  - Conversation Spark Score: ${evaluation.scores.conversation_spark} – ${evaluation.explanation.conversation_spark}
 - Suggestions for improvement from user: "${feedback}"
 
 ### Instructions:
@@ -160,8 +161,15 @@ Rewrite the response based on user's feedback. Follow these guidelines:
 The goal is to make users feel effortlessly interesting, like someone worth messaging back.
 
 Return only the **revised response**. No additional commentary or formatting.`;
-    const revisedResponse = await callOpenAI(systemContent, "");
-    return { revisedResponse };
+    
+    try {
+      const revisedResponse = await callOpenAI(systemContent, "");
+      console.log("revisePromptSuggestion result:", { revisedResponse });
+      return { revisedResponse };
+    } catch (error) {
+      console.error("Error in revisePromptSuggestion:", error);
+      throw error;
+    }
   }
 
   /**
@@ -224,19 +232,19 @@ The user wrote a response to a Hinge prompt and received an evaluation with scor
 ### Evaluation Summary:
 - overall Score: ${evaluation.overall_score}
 - Personality Score: ${evaluation.scores.personality} – ${
-      evaluation.explanations.personality
+      evaluation.explanation.personality
     }
 - Tone Fit Score: ${evaluation.scores.tone_fit} – ${
-      evaluation.explanations.tone_fit
+      evaluation.explanation.tone_fit
     }
-- Brevity & Clarity Score: ${evaluation.scores.brevity_clarity} – ${
-      evaluation.explanations.brevity_clarity
+- Brevity & Clarity Score: ${evaluation.scores.brevity_and_clarity} – ${
+      evaluation.explanation.brevity_and_clarity
     }
 - Originality Score: ${evaluation.scores.originality} – ${
-      evaluation.explanations.originality
+      evaluation.explanation.originality
     }
 - Conversation Spark Score: ${evaluation.scores.conversation_spark} – ${
-      evaluation.explanations.conversation_spark
+      evaluation.explanation.conversation_spark
     }
 ### Suggestions for Improvement:
 - ${suggestions.join("\n- ")}
