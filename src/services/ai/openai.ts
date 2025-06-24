@@ -112,7 +112,8 @@ Return for each:
 - Label:  
   🔥 Top-Tier (9–10), 🟢 Great Potential (7.5–8.9), 🟡 Room to Grow (6–7.4), 🔴 Needs Work (<6)
 
-Respond in JSON format only, with an array of responses and their evaluations.`;
+Respond in JSON format only, with an array of responses and their evaluations. The root object must have a key named "responses" which contains the array.
+For example: { "responses": [ { "response": "...", "scores": {...} }, ... ] }`;
 
     const suggestions = await callOpenAI(generateResponsesSystem, "", true);
     return { chosenPrompt, ...suggestions };
