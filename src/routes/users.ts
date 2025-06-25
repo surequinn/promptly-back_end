@@ -78,6 +78,9 @@ router.get("/profile", requireAuth(), async (req, res) => {
 
 // Update user profile (requires authentication)
 router.put("/profile", requireAuth(), async (req, res) => {
+  console.log("[BACKEND DEBUG] Received profile update request. Auth userId:", getAuth(req).userId);
+  console.log("[BACKEND DEBUG] Full request body:", JSON.stringify(req.body, null, 2));
+  
   const auth = getAuth(req);
 
   if (!auth.userId) {
@@ -93,45 +96,46 @@ router.put("/profile", requireAuth(), async (req, res) => {
       age,
       gender,
       orientation,
-      selectedVibes,
-      interests,
-      uniqueInterest,
-      profileCompleted,
+      email,
+      profileCompleted
     } = req.body;
-
-    // Update user in database
+    
+    console.log("[BACKEND DEBUG] Extracted email from payload:", email);
+    
+    const updatePayload = {
+      id: auth.userId,
+      clerkUserId: auth.userId,
+      email,
+      name,
+      age,
+      gender,
+      orientation,
+      profileCompleted,
+      updatedAt: new Date().toISOString(),
+    };
+    
+    console.log("[BACKEND DEBUG] Preparing Supabase upsert with:", JSON.stringify(updatePayload, null, 2));
+    
     const { data: updatedUser, error } = await supabase
       .from("users")
-      .upsert(
-        {
-          id: auth.userId,
-          clerkUserId: auth.userId,
-          name,
-          age,
-          gender,
-          orientation,
-          selectedVibes,
-          interests,
-          uniqueInterest,
-          profileCompleted,
-          updatedAt: new Date().toISOString(),
-        },
-        { onConflict: "clerkUserId" }
-      )
+      .upsert(updatePayload, { onConflict: "clerkUserId" })
       .select()
       .single();
 
-    if (error) throw error;
-
-    const result = {
+    if (error) {
+      console.error("[BACKEND DEBUG] Supabase upsert error:", error);
+      throw error;
+    }
+    
+    console.log("[BACKEND DEBUG] Supabase upsert successful. Updated user:", JSON.stringify(updatedUser, null, 2));
+    
+    return res.json({
       message: "User profile updated successfully",
       userId: auth.userId,
       data: updatedUser,
-    };
-    console.log("API /profile (PUT) result:", JSON.stringify(result, null, 2));
-    return res.json(result);
+    });
   } catch (error) {
-    console.error("Error updating user profile:", error);
+    console.error("[BACKEND DEBUG] Profile update failed:", error);
     return res.status(500).json({
       error: true,
       message: "Failed to update user profile",
