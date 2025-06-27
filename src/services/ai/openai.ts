@@ -286,6 +286,7 @@ Give 1–2 short, specific tips to help the user improve their answer. Keep them
     evaluation: any,
     suggestions: string[]
   ): Promise<any> {
+    console.log("reviseUserPrompt - evaluation structure:", JSON.stringify(evaluation, null, 2));
     const systemContent = `You are an AI dating assistant that helps users improve their dating app profile responses (like on Hinge) based on expert evaluation feedback.
 The user wrote a response to a Hinge prompt and received an evaluation with scores and suggestions. Your job is to rewrite the response to make it more engaging, personal, and conversation-worthy, using the suggestions provided.
 
@@ -293,21 +294,21 @@ The user wrote a response to a Hinge prompt and received an evaluation with scor
 - Prompt: "${prompt}"
 - Original Response: "${response}"
 ### Evaluation Summary:
-- overall Score: ${evaluation.overall_score}
-- Personality Score: ${evaluation.scores.personality} – ${
-      evaluation.explanations.personality
+- overall Score: ${evaluation.overall_score || 'N/A'}
+- Personality Score: ${evaluation.scores?.personality || 'N/A'} – ${
+      evaluation.explanations?.personality || 'No explanation provided'
     }
-- Tone Fit Score: ${evaluation.scores.tone_fit} – ${
-      evaluation.explanations.tone_fit
+- Tone Fit Score: ${evaluation.scores?.tone_fit || 'N/A'} – ${
+      evaluation.explanations?.tone_fit || 'No explanation provided'
     }
-- Brevity & Clarity Score: ${evaluation.scores.brevity_clarity} – ${
-      evaluation.explanations.brevity_clarity
+- Brevity & Clarity Score: ${evaluation.scores?.brevity_clarity || 'N/A'} – ${
+      evaluation.explanations?.brevity_clarity || 'No explanation provided'
     }
-- Originality Score: ${evaluation.scores.originality} – ${
-      evaluation.explanations.originality
+- Originality Score: ${evaluation.scores?.originality || 'N/A'} – ${
+      evaluation.explanations?.originality || 'No explanation provided'
     }
-- Conversation Spark Score: ${evaluation.scores.conversation_spark} – ${
-      evaluation.explanations.conversation_spark
+- Conversation Spark Score: ${evaluation.scores?.conversation_spark || 'N/A'} – ${
+      evaluation.explanations?.conversation_spark || 'No explanation provided'
     }
 ### Suggestions for Improvement:
 - ${suggestions.join("\n- ")}
