@@ -99,19 +99,19 @@ router.put("/profile", requireAuth(), async (req, res) => {
       email,
       profileCompleted
     } = req.body;
-    
+
     console.log("[BACKEND DEBUG] Extracted email from payload:", email);
     
     const updatePayload = {
-      id: auth.userId,
-      clerkUserId: auth.userId,
+          id: auth.userId,
+          clerkUserId: auth.userId,
       email,
-      name,
-      age,
-      gender,
-      orientation,
-      profileCompleted,
-      updatedAt: new Date().toISOString(),
+          name,
+          age,
+          gender,
+          orientation,
+          profileCompleted,
+          updatedAt: new Date().toISOString(),
     };
     
     console.log("[BACKEND DEBUG] Preparing Supabase upsert with:", JSON.stringify(updatePayload, null, 2));

@@ -31,7 +31,7 @@ app.use(helmet());
 // CORS configuration
 const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = [
+      const allowedOrigins = [
       "https://promptly-front-end.vercel.app", // main production frontend
       "https://promptly-frontend-green.vercel.app", // preview
       "https://promptly-front-hhihbvekx-quinns-projects-3ee04bc1.vercel.app", // preview
@@ -40,14 +40,14 @@ const corsOptions = {
       "http://localhost:8083", // local web (alt)
       "http://192.168.2.171:8083", // local network web (alt)
       // Add more preview URLs here as needed
-    ];
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };

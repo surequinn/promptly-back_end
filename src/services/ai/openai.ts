@@ -226,9 +226,9 @@ The goal is to make users feel effortlessly interesting, like someone worth mess
 Return only the **revised response**. No additional commentary or formatting.`;
     
     try {
-      const revisedResponse = await callOpenAI(systemContent, "");
+    const revisedResponse = await callOpenAI(systemContent, "");
       console.log("revisePromptSuggestion result:", { revisedResponse });
-      return { revisedResponse };
+    return { revisedResponse };
     } catch (error) {
       console.error("Error in revisePromptSuggestion:", error);
       throw error;
