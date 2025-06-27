@@ -96,6 +96,9 @@ router.put("/profile", requireAuth(), async (req, res) => {
       age,
       gender,
       orientation,
+      selectedVibes,
+      interests,
+      uniqueInterest,
       email,
       profileCompleted
     } = req.body;
@@ -110,6 +113,9 @@ router.put("/profile", requireAuth(), async (req, res) => {
           age,
           gender,
           orientation,
+          selectedVibes,
+          interests,
+          uniqueInterest,
           profileCompleted,
           updatedAt: new Date().toISOString(),
     };
