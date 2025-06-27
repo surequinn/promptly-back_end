@@ -192,6 +192,7 @@ For example: { "responses": [ { "response": "...", "scores": {...} }, ... ] }`;
     feedback: string
   ): Promise<any> {
     console.log("revisePromptSuggestion input:", { prompt, response, evaluation, feedback });
+    console.log("revisePromptSuggestion - evaluation structure:", JSON.stringify(evaluation, null, 2));
     const systemContent = `You are an AI dating assistant who generates and evaluates creative, personalized answers to dating app prompts (like Hinge). Your job is to generate 3 unique responses to this prompt: "${prompt}", and then score each response using expert evaluation criteria. Now, 3 responses have been generated, and the user is choosing a response to improve based on user input feedback. Your job is to revise the response using the feedback and suggestions provided.
 
 You will receive:
@@ -204,12 +205,13 @@ You will receive:
 - Prompt: "${prompt}"
 - User chosen AI-Generated Response: "${response}"
 - Evaluation Summary of this response:
-  - Personality Score: ${evaluation.scores.personality} – ${evaluation.explanation.personality}
-  - Tone Fit Score: ${evaluation.scores.tone_fit} – ${evaluation.explanation.tone_fit}
-  - Brevity & Clarity Score: ${evaluation.scores.brevity_and_clarity} – ${evaluation.explanation.brevity_and_clarity}
-  - Originality Score: ${evaluation.scores.originality} – ${evaluation.explanation.originality}
-  - Conversation Spark Score: ${evaluation.scores.conversation_spark} – ${evaluation.explanation.conversation_spark}
-- Suggestions for improvement from user: "${feedback}"
+  - Personality Score: ${evaluation.scores?.Personality || evaluation.scores?.personality || 'N/A'}
+  - Tone Fit Score: ${evaluation.scores?.['Tone Fit'] || evaluation.scores?.tone_fit || 'N/A'}
+  - Brevity & Clarity Score: ${evaluation.scores?.['Brevity & Clarity'] || evaluation.scores?.brevity_and_clarity || 'N/A'}
+  - Originality Score: ${evaluation.scores?.Originality || evaluation.scores?.originality || 'N/A'}
+  - Conversation Spark Score: ${evaluation.scores?.['Conversation Spark'] || evaluation.scores?.conversation_spark || 'N/A'}
+  - Overall Label: ${evaluation.label || 'No label provided'}
+- User feedback for improvement: "${feedback}"
 
 ### Instructions:
 Rewrite the response based on user's feedback. Follow these guidelines:
