@@ -89,12 +89,25 @@ router.post("/evaluate-custom", requireAuth(), async (req, res) => {
 // Feature 2.1: Revise a user's evaluated response
 router.post("/revise-custom", requireAuth(), async (req, res) => {
   try {
+    console.log("[DEBUG /revise-custom] Full request body:", JSON.stringify(req.body, null, 2));
+    
     const { prompt, response, evaluation, suggestions } = req.body;
+    
+    console.log("[DEBUG /revise-custom] Extracted fields:");
+    console.log("- prompt:", prompt);
+    console.log("- response:", response);
+    console.log("- evaluation type:", typeof evaluation);
+    console.log("- suggestions type:", typeof suggestions);
+    console.log("- suggestions:", suggestions);
+    
     if (!prompt || !response || !evaluation || !suggestions) {
+      console.log("[DEBUG /revise-custom] Missing required fields validation failed");
       return res
         .status(400)
         .json({ error: "Missing required fields for revision" });
     }
+    
+    console.log("[DEBUG /revise-custom] Calling aiService.reviseUserPrompt...");
     const revised = await aiService.reviseUserPrompt(
       prompt,
       response,
@@ -104,7 +117,9 @@ router.post("/revise-custom", requireAuth(), async (req, res) => {
     console.log("API /revise-custom result:", JSON.stringify(revised, null, 2));
     return res.json(revised);
   } catch (error) {
-    console.error("Error revising user prompt:", error);
+    console.error("[ERROR /revise-custom] Full error details:", error);
+    console.error("[ERROR /revise-custom] Error message:", (error as Error).message);
+    console.error("[ERROR /revise-custom] Error stack:", (error as Error).stack);
     return res.status(500).json({ error: "Failed to revise user prompt" });
   }
 });

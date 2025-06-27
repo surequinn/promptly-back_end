@@ -295,19 +295,19 @@ The user wrote a response to a Hinge prompt and received an evaluation with scor
 ### Evaluation Summary:
 - overall Score: ${evaluation.overall_score}
 - Personality Score: ${evaluation.scores.personality} – ${
-      evaluation.explanation.personality
+      evaluation.explanations.personality
     }
 - Tone Fit Score: ${evaluation.scores.tone_fit} – ${
-      evaluation.explanation.tone_fit
+      evaluation.explanations.tone_fit
     }
-- Brevity & Clarity Score: ${evaluation.scores.brevity_and_clarity} – ${
-      evaluation.explanation.brevity_and_clarity
+- Brevity & Clarity Score: ${evaluation.scores.brevity_clarity} – ${
+      evaluation.explanations.brevity_clarity
     }
 - Originality Score: ${evaluation.scores.originality} – ${
-      evaluation.explanation.originality
+      evaluation.explanations.originality
     }
 - Conversation Spark Score: ${evaluation.scores.conversation_spark} – ${
-      evaluation.explanation.conversation_spark
+      evaluation.explanations.conversation_spark
     }
 ### Suggestions for Improvement:
 - ${suggestions.join("\n- ")}
