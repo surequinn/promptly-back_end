@@ -64,6 +64,86 @@ router.post("/generate-suggestions-for-prompt", requireAuth(), async (req, res) 
   }
 });
 
+// Feature 1.3: Save a selected AI-generated suggestion to database
+router.post("/save-suggestion", requireAuth(), async (req, res) => {
+  const auth = getAuth(req);
+
+  if (!auth.userId) {
+    return res.status(401).json({
+      error: true,
+      message: "Authentication required",
+    });
+  }
+
+  try {
+    const { prompt, selectedResponse, promptType = "GENERATED" } = req.body;
+
+    if (!prompt || !selectedResponse) {
+      return res.status(400).json({
+        error: true,
+        message: "Prompt and selected response are required",
+      });
+    }
+
+    console.log("[DEBUG /save-suggestion] Request data:", {
+      prompt,
+      selectedResponse,
+      promptType,
+      userId: auth.userId
+    });
+
+    // Get user's database ID
+    const { data: user } = await supabase
+      .from("users")
+      .select("id")
+      .eq("clerkUserId", auth.userId)
+      .single();
+
+    if (!user) {
+      return res.status(404).json({
+        error: true,
+        message: "User not found",
+      });
+    }
+
+    // Save the selected suggestion to database
+    const newPrompt = {
+      id: uuidv4(),
+      userId: user.id,
+      category: prompt, // Using the prompt as category
+      responseText: selectedResponse,
+      aiGenerated: promptType === "GENERATED",
+      promptType: promptType as "GENERATED" | "USER_WRITTEN" | "EDITED",
+      status: "ACTIVE" as const,
+    };
+
+    const { data: savedPrompt, error } = await supabase
+      .from("prompts")
+      .insert([newPrompt])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("[ERROR /save-suggestion] Database error:", error);
+      throw error;
+    }
+
+    const result = {
+      message: "AI suggestion saved successfully",
+      userId: auth.userId,
+      data: savedPrompt,
+    };
+    console.log("API /save-suggestion result:", JSON.stringify(result, null, 2));
+    return res.json(result);
+  } catch (error) {
+    console.error("Error saving AI suggestion:", error);
+    return res.status(500).json({
+      error: true,
+      message: "Failed to save AI suggestion",
+    });
+  }
+});
+
 // Feature 2: Evaluate a user's own response
 router.post("/evaluate-custom", requireAuth(), async (req, res) => {
   try {
