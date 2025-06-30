@@ -290,7 +290,7 @@ Give 1–2 short, specific tips to help the user improve their answer. Keep them
   ): Promise<any> {
     console.log("reviseUserPrompt - evaluation structure:", JSON.stringify(evaluation, null, 2));
     const systemContent = `You are an AI dating assistant that helps users improve their dating app profile responses (like on Hinge) based on expert evaluation feedback.
-The user wrote a response to a Hinge prompt and received an evaluation with scores and suggestions. Your job is to rewrite the response to make it more engaging, personal, and conversation-worthy, using the suggestions provided.
+The user wrote a response to a Hinge prompt and received an evaluation with scores and suggestions. Your job is to rewrite the response to make it more engaging, personal, and conversation-worthy, using the suggestions provided. Please make sure the revised response will be scored higher than score of 9.
 
 ### Input:
 - Prompt: "${prompt}"
