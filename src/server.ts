@@ -32,6 +32,10 @@ app.use(helmet());
 const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       const allowedOrigins = [
+      "https://gopromptly.co", // New Production URL
+      "http://gopromptly.co",
+      "https://www.gopromptly.co", // New www Production URL
+      "http://www.gopromptly.co",
       "https://promptly-front-end.vercel.app", // main production frontend
       "https://promptly-frontend-green.vercel.app", // preview
       "https://promptly-front-hhihbvekx-quinns-projects-3ee04bc1.vercel.app", // preview
